@@ -1,9 +1,9 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import HomePage from './pages/HomePage.jsx';
 import EditPage from './pages/EditPage.jsx';
+import "./App.css";
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
     {
@@ -17,7 +17,5 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>,
 )
