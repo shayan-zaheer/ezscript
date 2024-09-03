@@ -51,13 +51,13 @@ body{
     transition: all 0.3s ease-in-out;
 }
 
-.join{
+.join, .leave{
     background: #4aed88;
     width: 100px;
     margin-left: auto;
 }
 
-.join:hover{
+.join:hover, .leave:hover{
     background: #2b824c;
 }
 
@@ -77,4 +77,45 @@ body{
     color: #368654;
     border-color: #368654;
 
+}
+
+.main-wrap{
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    height: 100vh;
+}
+
+.nav-bar{
+    background: #1c1e29;
+    padding: 16px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.in-nav{
+    flex: 1;
+}
+
+.connect-list{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.client{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+.username{
+    margin-top: 10px;
+}
+
+.leave{
+    margin-top: 20px;
+    width: 100%;
 }

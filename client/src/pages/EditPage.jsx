@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Client from "../components/Client";
+import Editor from "../components/Editor";
 
 function EditPage() {
 	const [clients, setClients] = useState([
@@ -10,6 +11,10 @@ function EditPage() {
 		{
 			socketId: 2,
 			username: "John Doe",
+		},
+        {
+			socketId: 3,
+			username: "King Kong",
 		},
 	]);
 
@@ -27,10 +32,12 @@ function EditPage() {
 						))}
 					</div>
 				</div>
-                <button>Copy Room ID</button>
-                <button>Leave</button>
+                <button className="btn copy">Copy Room ID</button>
+                <button className="btn leave">Leave</button>
 			</div>
-			<div className="edit-wrap">Editor goes here!</div>
+			<div className="edit-wrap">
+                <Editor />
+            </div>
 		</div>
 	);
 }
