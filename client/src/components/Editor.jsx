@@ -1,18 +1,28 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {Editor as Edit} from "@monaco-editor/react";
 import {DNA} from "react-loader-spinner";
+import { executeCode } from "../../output_api";
 
 function Editor(){
+    const [output, setOutput] = useState("");
+    const [language, setLanguage] = useState("javascript");
     const editRef = useRef();
 
     function handleEditorDidMount(editor){
         editRef.current = editor;
     }
 
-    function runCode(){
-        const code = editRef.current.getValue().toString();
-        const output = eval(code);
-        console.log(output);
+    async function runCode(){
+        const code = editRef.current.getValue();
+        if(!code) return;
+        try{
+            const {run: result} = await executeCode(code);
+            setOutput(result);
+            console.log(output);
+        }
+        catch(err){
+
+        }
     }
 
     return (
@@ -20,9 +30,8 @@ function Editor(){
             <Edit
                 className="custom"
                 height="90vh"
-                defaultLanguage="javascript"
+                defaultLanguage={language}
                 theme="vs-dark"
-                defaultValue={`function HelloWorld(){\n\tconsole.log("Hello")\n}`}
                 onMount={handleEditorDidMount}
                 loading={<DNA
                     visible={true}
