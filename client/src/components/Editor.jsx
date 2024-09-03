@@ -1,30 +1,40 @@
-import { useEffect } from "react";
-import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
-import { dracula } from '@uiw/codemirror-theme-dracula';
+import { useRef } from "react";
+import {Editor as Edit} from "@monaco-editor/react";
+import {DNA} from "react-loader-spinner";
 
 function Editor(){
+    const editRef = useRef();
 
-    useEffect(() => {
-        async function init(){
-            // Codemirror.fromTextArea(document.getElementById("realtime"), {
-            //     mode: {
-            //         name: "javascript",
-            //         json: true
-            //     },
-            //     theme: "dracula",
-            //     autoCloseTag: true,
-            //     autoCloseBrackets: true,
-            //     lineNumbers: true
-            // });
+    function handleEditorDidMount(editor){
+        editRef.current = editor;
+    }
 
-        };
-
-        init();
-    }, []);
+    function runCode(){
+        const code = editRef.current.getValue().toString();
+        const output = eval(code);
+        console.log(output);
+    }
 
     return (
-        <CodeMirror theme={dracula} height="200px" extensions={[javascript({ jsx: true })]} />
+<>
+            <Edit
+                className="custom"
+                height="90vh"
+                defaultLanguage="javascript"
+                theme="vs-dark"
+                defaultValue={`function HelloWorld(){\n\tconsole.log("Hello")\n}`}
+                onMount={handleEditorDidMount}
+                loading={<DNA
+                    visible={true}
+                    height="80"
+                    width="80"
+                    ariaLabel="dna-loading"
+                    wrapperStyle={{}}
+                    wrapperClass="dna-wrapper"
+                    />}
+          />
+          <button className="btn" onClick={runCode}>Run Code</button>
+</>
     )
 };
 
