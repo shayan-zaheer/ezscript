@@ -3,19 +3,34 @@ import Client from "../components/Client";
 import Editor from "../components/Editor";
 import { initSocket } from "../../socket";
 // import ACTIONS from "../../../server/actions";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 function EditPage() {
+    const navigate = useNavigate();
     const location = useLocation();
     const socketRef = useRef(null);
 
     useEffect(() => {
         const init = async () => {
             socketRef.current = await initSocket();
-            // socketRef.current.emit(ACTIONS.JOIN, {
-            //     roomId,
-            //     username: location.state?.username
-            // })
+
+            socketRef.current.on("connect_error", err => handleErrors(err));
+            socketRef.current.on("connect_failed", err => handleErrors(err));
+
+            function handleErrors(error){
+                console.log("Socket error!", error);
+                toast.error("Socket connection failed, try again later!", {
+                    theme: "dark",
+                    position: "top-right"
+                });
+                navigate("/");
+            }
+
+            socketRef.current.emit(ACTIONS.JOIN, {
+                roomId,
+                username: location.state?.username
+            })
         };
 
         init();
@@ -41,6 +56,7 @@ function EditPage() {
 		<div className="main-wrap">
 			<div className="nav-bar">
 				<div className="in-nav">
+                    <ToastContainer />
 					<h3>Connected</h3>
 					<div className="connect-list">
 						{clients.map((client) => (
