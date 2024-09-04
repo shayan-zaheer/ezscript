@@ -16,12 +16,11 @@ function Editor() {
 		const code = editRef.current.getValue();
 		if (!code) return;
 		try {
-			const result = await executeCode(code);
-            console.log(result);
-			// const { run: result } = await executeCode(code);
-			// setOutput(result);
-			// console.log(output);
-		} catch (err) {}
+			const { run: result } = await executeCode(code);
+			setOutput(result);
+		} catch (err) {
+            setOutput(err);
+        }
 	}
 
 	return (
