@@ -3,10 +3,11 @@ import Client from "../components/Client";
 import Editor from "../components/Editor";
 import { initSocket } from "../../socket";
 // import ACTIONS from "../../../server/actions";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
 function EditPage() {
+    const {roomId} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const socketRef = useRef(null);
@@ -27,9 +28,19 @@ function EditPage() {
                 navigate("/");
             }
 
-            socketRef.current.emit(ACTIONS.JOIN, {
+            socketRef.current.emit("join", {
                 roomId,
                 username: location.state?.username
+            })
+
+            // listening for joined
+            socketRef.current.on("joined", (username) => {
+                // if(username != location.state?.username){
+                // }
+                toast.success(`${username} joined the room!`, {
+                    theme: "dark",
+                    position: "top-right"
+                })
             })
         };
 
@@ -51,6 +62,8 @@ function EditPage() {
 			username: "King Kong",
 		},
 	]);
+
+    // !location.state ? <Navigate /> : 
 
 	return (
 		<div className="main-wrap">
