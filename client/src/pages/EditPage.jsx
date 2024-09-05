@@ -38,14 +38,14 @@ function EditPage() {
 
             // listening for joined
             socketRef.current.on("joined", ({username, clients}) => {
-                // if(username != location.state?.username){ 
-                // }
-                console.log(`${username} is joining room ${roomId}`);
+                if(username !== location.state?.username){
+                    console.log(`${username} is joining room ${roomId}`);
                     toast.success(`${username} joined the room!`, {
                         theme: "dark",
                         position: "top-right"
                     })
-                    setClients(clients);
+                }
+                setClients(clients);
             })
         };
         
@@ -54,9 +54,6 @@ function EditPage() {
     }, []);
 
     !location.state && <Navigate to="/" />
-
-
-    // !location.state ? <Navigate /> : 
 
 	return (
 		<div className="main-wrap">
@@ -74,6 +71,7 @@ function EditPage() {
 					</div>
 				</div>
                 <button className="btn copy">Copy Room ID</button>
+                <button className="btn run">Run Code</button>
                 <button className="btn leave">Leave</button>
 			</div>
 			<div className="edit-wrap">

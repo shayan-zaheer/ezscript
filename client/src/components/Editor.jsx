@@ -19,33 +19,28 @@ function Editor() {
 			const { run: result } = await executeCode(code);
 			setOutput(result);
 		} catch (err) {
-            setOutput(err);
-        }
+			setOutput(err);
+		}
 	}
 
 	return (
-		<>
-			<Edit
-				className="custom"
-				height="90vh"
-				defaultLanguage={language}
-				theme="vs-dark"
-				onMount={handleEditorDidMount}
-				loading={
-					<DNA
-						visible={true}
-						height="80"
-						width="80"
-						ariaLabel="dna-loading"
-						wrapperStyle={{}}
-						wrapperClass="dna-wrapper"
-					/>
-				}
-			/>
-			<button className="btn" onClick={runCode}>
-				Run Code
-			</button>
-		</>
+		<Edit
+			className="custom"
+			height="100vh"
+			defaultLanguage={language}
+			theme="vs-dark"
+			onMount={handleEditorDidMount}
+			loading={
+				<DNA
+					visible={true}
+					height="80"
+					width="80"
+					ariaLabel="dna-loading"
+					wrapperStyle={{}}
+					wrapperClass="dna-wrapper"
+				/>
+			}
+		/>
 	);
 }
 

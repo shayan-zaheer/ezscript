@@ -30,16 +30,27 @@ io.on("connection", (socket) => {
     socket.on(ACTIONS.JOIN, ({roomId, username}) => {
         userSocketMap[socket.id] = username;
         socket.join(roomId);
-        console.log(roomId, username);
         const clients = getAllConnectedClients(roomId);
-        // clients.map(({socketID}) => {
-        //     io.to(socketID).emit("joined", {
-        //         clients, username, recentJoinedID: socket.id
-        //     });
-        // })
-        socket.broadcast.to(roomId).emit("joined", {
-            clients, username
+        console.log(clients);
+        clients.forEach(({socketID}) => {
+            io.to(socketID).emit("joined", {
+                clients, username, recentJoinedID: socket.id
+            });
         })
+
+        // ALTERNATE LOGICS, WILL CHECK LATER
+
+        // socket.broadcast.to(roomId).emit("joined", {
+        //     clients, username
+        // })
+
+        // io.to(roomId).emit("joined", {
+        //     clients, username
+        // })
+
+        // socket.to(roomId).emit("joined", {
+        //     clients, username
+        // })
     })
 })
 
