@@ -60,9 +60,12 @@ function EditPage() {
             })
         };
         
-
-
         init();
+
+        return () => {
+            socketRef.current.off("join")
+            socketRef.current.disconnect();
+        }
 
     }, []);
 
@@ -88,7 +91,7 @@ function EditPage() {
                 <button className="btn leave">Leave</button>
 			</div>
 			<div className="edit-wrap">
-                <Editor />
+                <Editor socketRef={socketRef}/>
             </div>
 		</div>
 	);
