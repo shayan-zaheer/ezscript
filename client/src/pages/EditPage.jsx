@@ -7,6 +7,9 @@ import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify";
 
 function EditPage() {
+
+    const [clients, setClients] = useState([]);
+
     const {roomId} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -34,34 +37,24 @@ function EditPage() {
             })
 
             // listening for joined
-            socketRef.current.on("joined", (username) => {
-                // if(username != location.state?.username){
+            socketRef.current.on("joined", ({username, clients}) => {
+                // if(username != location.state?.username){ 
                 // }
-                toast.success(`${username} joined the room!`, {
-                    theme: "dark",
-                    position: "top-right"
-                })
+                console.log(`${username} is joining room ${roomId}`);
+                    toast.success(`${username} joined the room!`, {
+                        theme: "dark",
+                        position: "top-right"
+                    })
+                    setClients(clients);
             })
         };
-
+        
         init();
 
     }, []);
 
-	const [clients, setClients] = useState([
-		{
-			socketId: 1,
-			username: "Rakesh K",
-		},
-		{
-			socketId: 2,
-			username: "John Doe",
-		},
-        {
-			socketId: 3,
-			username: "King Kong",
-		},
-	]);
+    !location.state && <Navigate to="/" />
+
 
     // !location.state ? <Navigate /> : 
 

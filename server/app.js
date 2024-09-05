@@ -30,9 +30,15 @@ io.on("connection", (socket) => {
     socket.on(ACTIONS.JOIN, ({roomId, username}) => {
         userSocketMap[socket.id] = username;
         socket.join(roomId);
+        console.log(roomId, username);
         const clients = getAllConnectedClients(roomId);
-        socket.broadcast.to(roomId).emit(ACTIONS.JOINED, {
-            username
+        // clients.map(({socketID}) => {
+        //     io.to(socketID).emit("joined", {
+        //         clients, username, recentJoinedID: socket.id
+        //     });
+        // })
+        socket.broadcast.to(roomId).emit("joined", {
+            clients, username
         })
     })
 })
