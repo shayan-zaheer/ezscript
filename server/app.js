@@ -38,7 +38,19 @@ io.on("connection", (socket) => {
             });
         })
 
-        // ALTERNATE LOGICS, WILL CHECK LATER
+        socket.on("disconnecting", () => {
+            const rooms = [...socket.rooms];
+            rooms.forEach(roomId => {
+                socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+                    socketID: socket.id,
+                    username: userSocketMap[socket.id]
+                });
+            });
+            delete userSocketMap[socket.id];
+            socket.leave();
+        });
+
+        // ALTERNATE LOGICS FOR JOINING, WILL CHECK LATER
 
         // socket.broadcast.to(roomId).emit("joined", {
         //     clients, username

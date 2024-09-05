@@ -47,8 +47,21 @@ function EditPage() {
                 }
                 setClients(clients);
             })
+            
+            // listening for disconnect
+            socketRef.current.on("disconnected", ({socketID, username}) => {
+                toast.success(`${username} left the room!`, {
+                    theme: "dark",
+                    position: "top-right"
+                });
+                setClients(prev => {
+                    return prev.filter((client) => client.socketID != socketID);
+                })
+            })
         };
         
+
+
         init();
 
     }, []);
