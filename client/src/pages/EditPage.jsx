@@ -8,12 +8,13 @@ import { toast, ToastContainer } from "react-toastify";
 
 function EditPage() {
 
+
     const [clients, setClients] = useState([]);
 
     const {roomId} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    const socketRef = useRef(null);
+    const socketRef = useRef(null); 
 
     useEffect(() => {
         const init = async () => {
@@ -91,7 +92,7 @@ function EditPage() {
                 <button className="btn leave">Leave</button>
 			</div>
 			<div className="edit-wrap">
-                <Editor socketRef={socketRef}/>
+                <Editor socketRef={socketRef} roomId={roomId}/>
             </div>
 		</div>
 	);
