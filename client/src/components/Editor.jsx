@@ -4,8 +4,7 @@ import { DNA } from "react-loader-spinner";
 import { executeCode } from "../../output_api";
 
 function Editor({ socketRef, roomId }) {
-	const editorRef = useRef(null); // Ref to store the editor instance
-
+	const editorRef = useRef(null);
 	const [output, setOutput] = useState("");
 	const [language, setLanguage] = useState("javascript");
 
@@ -23,13 +22,17 @@ function Editor({ socketRef, roomId }) {
 		};
 		init();
 
-		// Clean up the socket event listener when component unmounts
-		// return () => {
-		// 	if (socketRef.current) {
-		// 		socketRef.current.off("code-change");
-		// 	}
-		// };
-	}, [editorRef.current, roomId]);
+
+		return () => {
+			if (socketRef.current) {
+				socketRef.current.off("code-change");
+			}
+		};
+	}, [editorRef.current]);
+
+    function getEditorRef(){
+        return editorRef;
+    }
 
 	async function runCode() {
 		const editor = editorRef.current;
@@ -45,7 +48,6 @@ function Editor({ socketRef, roomId }) {
 
 	function handleCodeChange(value, event) {
 		if (socketRef.current) {
-			// Emit the code change via socket
 			socketRef.current.emit("code-change", {
 				roomId,
 				value,
@@ -60,7 +62,7 @@ function Editor({ socketRef, roomId }) {
 			language={language}
 			theme="vs-dark"
 			onMount={(editor) => {
-				editorRef.current = editor; // Store the editor instance
+				editorRef.current = editor;
 			}}
 			onChange={handleCodeChange}
 			loading={

@@ -2,19 +2,29 @@ import { useEffect, useRef, useState } from "react";
 import Client from "../components/Client";
 import Editor from "../components/Editor";
 import { initSocket } from "../../socket";
-// import ACTIONS from "../../../server/actions";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { executeCode } from "../../output_api";
 
 function EditPage() {
-
-
     const [clients, setClients] = useState([]);
 
     const {roomId} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const socketRef = useRef(null); 
+
+    async function runCode(editorRef) {
+		const editor = editorRef.current;
+		const code = editor?.getValue();
+		if (!code) return;
+		try {
+			const { run: result } = await executeCode(code);
+			setOutput(result);
+		} catch (err) {
+			setOutput(err);
+		}
+	}
 
     useEffect(() => {
         const init = async () => {
@@ -88,7 +98,7 @@ function EditPage() {
 					</div>
 				</div>
                 <button className="btn copy">Copy Room ID</button>
-                <button className="btn run">Run Code</button>
+                <button onClick={() => runCode()} className="btn run">Run Code</button>
                 <button className="btn leave">Leave</button>
 			</div>
 			<div className="edit-wrap">
