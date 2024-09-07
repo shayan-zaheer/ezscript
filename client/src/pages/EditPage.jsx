@@ -9,7 +9,8 @@ import { executeCode } from "../../output_api";
 function EditPage() {
     const codeRef = useRef(null);
     const [clients, setClients] = useState([]);
-    const [output, setOutput] = useState("");
+    const [userRole, setUserRole] = useState("viewer");
+    const [canEdit, setCanEdit] = useState(false);
 
     const {roomId} = useParams();
     const navigate = useNavigate();
@@ -44,6 +45,18 @@ function EditPage() {
 	// 	}
 	// }
 
+    function grantPermission(socketId){
+        if(socketRef.current){
+            socketRef.current.emit("grant-perm", {socketId, roomId});
+        }
+    }
+
+    function revokePermission(socketId){
+        if(socketRef.current){
+            socketRef.current.emit("revoke-perm", {socketId, roomId});
+        }
+    }
+
     function leaveRoom(){
         navigate("/")
     }
@@ -66,11 +79,12 @@ function EditPage() {
 
             socketRef.current.emit("join", {
                 roomId,
-                username: location.state?.username
+                username: location.state?.username,
+                role: location.state?.role
             })
 
             // listening for joined
-            socketRef.current.on("joined", ({username, clients, recentJoinedID}) => {
+            socketRef.current.on("joined", ({username, clients, recentJoinedID, role}) => {
                 if(username !== location.state?.username){
                     console.log(`${username} is joining room ${roomId}`);
                     toast.success(`${username} joined the room!`, {
@@ -79,6 +93,8 @@ function EditPage() {
                     })
                 }
                 setClients(clients);
+                setUserRole(role);
+                setCanEdit(role === "editor");
                 socketRef.current.emit("sync-code", {
                     value: codeRef.current,
                     recentJoinedID
@@ -95,13 +111,19 @@ function EditPage() {
                     return prev.filter((client) => client.socketID != socketID);
                 })
             })
+
+            socketRef.current.on("update-role", ({role}) => {
+                setUserRole(role);
+            })
         };
         
         init();
 
         return () => {
-            socketRef.current.off("join")
             socketRef.current.disconnect();
+            socketRef.current.off("join");
+            socketRef.current.off("disconnected");
+            socketRef.current.off("role-update");
         }
 
     }, []);
@@ -119,6 +141,10 @@ function EditPage() {
 							<Client
 								username={client.username}
 								key={client.socketId}
+                                role={client.role}
+                                isCurrentUser={client.socketID === socketRef.current.id}
+                                onGrantPermission={() => grantPermission(client.socketID)}
+                                onRevokePermission={() => revokePermission(client.socketID)}
 							/>
 						))}
 					</div>
@@ -128,7 +154,7 @@ function EditPage() {
                 <button onClick={leaveRoom} className="btn leave">Leave</button>
 			</div>
 			<div className="edit-wrap">
-                <Editor onCodeChange={(code) => {
+                <Editor canEdit={canEdit} onCodeChange={(code) => {
                     codeRef.current = code;
                 }} socketRef={socketRef} roomId={roomId}/>
             </div>

@@ -14,6 +14,7 @@ const io = new Server(server, {
 });
 
 const userSocketMap = {};
+const userRolesMap = {};
 
 function getAllConnectedClients(roomId) {
 	return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
@@ -21,6 +22,7 @@ function getAllConnectedClients(roomId) {
 			return {
 				socketID,
 				username: userSocketMap[socketID],
+                role: userRolesMap[socketID]
 			};
 		}
 	);
@@ -29,19 +31,18 @@ function getAllConnectedClients(roomId) {
 io.on("connection", (socket) => {
 	console.log(`Socket connected! ${socket.id}`);
 
-	// Handle user joining the room
-	socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
+	socket.on(ACTIONS.JOIN, ({ roomId, username, role }) => {
 		userSocketMap[socket.id] = username;
+        userRolesMap[socket.id] = role;
 		socket.join(roomId);
 
-		// Get all clients in the room
 		const clients = getAllConnectedClients(roomId);
 
-		// Notify all clients about the new joiner
 		clients.forEach(({ socketID }) => {
 			io.to(socketID).emit("joined", {
 				clients,
 				username,
+                role,
 				recentJoinedID: socket.id,
 			});
 		});
@@ -49,24 +50,30 @@ io.on("connection", (socket) => {
         console.log(clients);
 
 		if (clients.length > 1) {
-			// Request code from the first client (can be any other client in the room)
 			io.to(clients[0].socketID).emit(ACTIONS.SYNC_CODE, {
 				recentJoinedID: socket.id,
 			});
 		}
 	});
 
-	// Handle code changes and broadcast to others
 	socket.on(ACTIONS.CODE_CHANGE, ({ roomId, value }) => {
 		socket.broadcast.to(roomId).emit(ACTIONS.CODE_CHANGE, { value });
 	});
 
-	// When receiving a code sync request, send the current code to the new user
 	socket.on(ACTIONS.SYNC_CODE, ({ recentJoinedID, value }) => {
 		io.to(recentJoinedID).emit(ACTIONS.CODE_CHANGE, { value });
 	});
 
-	// Handle disconnection
+    socket.on("grant-perm", ({socketId, roomId}) => {
+        userRolesMap[socketId] = "editor";
+        io.to(socketId).emit("role-update", {role: "editor"});
+    });
+
+    socket.on("revoke-perm", ({socketId, roomId}) => {
+        userRolesMap[socketId] = "viewer";
+        io.to(socketId).emit("role-update", {role: "viewer"});
+    })
+
 	socket.on("disconnecting", () => {
 		const rooms = [...socket.rooms];
 		rooms.forEach((roomId) => {
@@ -76,6 +83,7 @@ io.on("connection", (socket) => {
 			});
 		});
 		delete userSocketMap[socket.id];
+        delete userRolesMap[socket.id];
 	});
 });
 

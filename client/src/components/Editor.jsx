@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Editor as Edit } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
-function Editor({ socketRef, roomId, onCodeChange }) {
+function Editor({ socketRef, roomId, onCodeChange, canEdit }) {
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
     const [language, setLanguage] = useState("javascript");
@@ -13,7 +13,7 @@ function Editor({ socketRef, roomId, onCodeChange }) {
                 socketRef.current.on("code-change", ({ value }) => {
                     const editor = editorRef.current;
                     if (editor && value !== editor.getValue()) {
-                        isUpdatingFromServer.current = true; // Mark that this change is coming from the server
+                        isUpdatingFromServer.current = true;
                         editor.setValue(value);
                         onCodeChange(value);
                     }
@@ -26,6 +26,15 @@ function Editor({ socketRef, roomId, onCodeChange }) {
                         value: code,
                     });
                 });
+
+                socketRef.current.on("role-update", ({role}) => {
+                    if(role === "viewer"){
+                        editorRef.current.updateOptions({readOnly: true});
+                    }
+                    else if(role === "editor"){
+                        editorRef.current.updateOptions({readOnly: false});
+                    }
+                })
             }
         };
         init();
@@ -34,9 +43,10 @@ function Editor({ socketRef, roomId, onCodeChange }) {
             if (socketRef.current) {
                 socketRef.current.off("code-change");
                 socketRef.current.off("sync-code");
+                socketRef.current.off("role-update");
             }
         };
-    }, [socketRef.current]);
+    }, [socketRef.current, editorRef.current]);
 
     function handleCodeChange(value, event) {
         if (!isUpdatingFromServer.current) {
@@ -58,6 +68,9 @@ function Editor({ socketRef, roomId, onCodeChange }) {
             theme="vs-dark"
             onMount={(editor) => {
                 editorRef.current = editor;
+            }}
+            options={{
+                readOnly: !canEdit
             }}
             onChange={handleCodeChange}
             loading={

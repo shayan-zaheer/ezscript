@@ -130,3 +130,47 @@ body{
     font-size: 25px;
     line-height: 1.6;
 }
+
+.client {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #444;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background-color: #222;
+}
+
+.username {
+    margin-left: 15px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.roleTag {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #555;
+    color: #fff;
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+.roleTag.editor {
+    background-color: #4caf50; /* Green for editor */
+}
+
+.roleTag.viewer {
+    background-color: #f44336; /* Red for viewer */
+}
+
+.grantBtn {
+    background-color: #4caf50;
+    color: white;
+}
+
+.revokeBtn {
+    background-color: #f44336;
+    color: white;
+}
