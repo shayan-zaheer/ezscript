@@ -7,24 +7,46 @@ import { toast, ToastContainer } from "react-toastify";
 import { executeCode } from "../../output_api";
 
 function EditPage() {
+    const codeRef = useRef(null);
     const [clients, setClients] = useState([]);
+    const [output, setOutput] = useState("");
 
     const {roomId} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const socketRef = useRef(null); 
 
-    async function runCode(editorRef) {
-		const editor = editorRef.current;
-		const code = editor?.getValue();
-		if (!code) return;
-		try {
-			const { run: result } = await executeCode(code);
-			setOutput(result);
-		} catch (err) {
-			setOutput(err);
-		}
-	}
+    async function copyRoomId(){
+        try{
+            await navigator.clipboard.writeText(roomId);
+            toast.success("Room ID has been copied to your clipboard!", {
+                theme: "dark",
+                position: "top-right"
+            });
+        }
+        catch(err){
+            toast.error(err, {
+                theme: "dark",
+                positon: "top-right"
+            })
+        }
+    }
+
+    // async function runCode() {
+	// 	const editor = editorRef.current;
+	// 	const code = editor?.getValue();
+	// 	if (!code) return;
+	// 	try {
+	// 		const { run: result } = await executeCode(code);
+	// 		setOutput(result);
+	// 	} catch (err) {
+	// 		setOutput(err);
+	// 	}
+	// }
+
+    function leaveRoom(){
+        navigate("/")
+    }
 
     useEffect(() => {
         const init = async () => {
@@ -48,7 +70,7 @@ function EditPage() {
             })
 
             // listening for joined
-            socketRef.current.on("joined", ({username, clients}) => {
+            socketRef.current.on("joined", ({username, clients, recentJoinedID}) => {
                 if(username !== location.state?.username){
                     console.log(`${username} is joining room ${roomId}`);
                     toast.success(`${username} joined the room!`, {
@@ -57,6 +79,10 @@ function EditPage() {
                     })
                 }
                 setClients(clients);
+                socketRef.current.emit("sync-code", {
+                    value: codeRef.current,
+                    recentJoinedID
+                });
             })
             
             // listening for disconnect
@@ -97,12 +123,14 @@ function EditPage() {
 						))}
 					</div>
 				</div>
-                <button className="btn copy">Copy Room ID</button>
-                <button onClick={() => runCode()} className="btn run">Run Code</button>
-                <button className="btn leave">Leave</button>
+                <button onClick={copyRoomId} className="btn copy">Copy Room ID</button>
+                <button className="btn run">Run Code</button>
+                <button onClick={leaveRoom} className="btn leave">Leave</button>
 			</div>
 			<div className="edit-wrap">
-                <Editor socketRef={socketRef} roomId={roomId}/>
+                <Editor onCodeChange={(code) => {
+                    codeRef.current = code;
+                }} socketRef={socketRef} roomId={roomId}/>
             </div>
 		</div>
 	);
