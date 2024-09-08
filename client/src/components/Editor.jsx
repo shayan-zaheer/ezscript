@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
-function Editor({ socketRef, roomId, userRole, setEditInstance }) {
+function Editor({ socketRef, roomId, userRole, setUserRole, setEditInstance }) {
     console.log(socketRef.current, userRole);
 
     const editorRef = useRef(null);
@@ -25,16 +25,9 @@ function Editor({ socketRef, roomId, userRole, setEditInstance }) {
                     }
                 });
 
-                socketRef.current.on("sync-code", ({ recentJoinedID }) => {
-                    const code = editorRef.current.getValue();
-                    socketRef.current.emit("sync-code", {
-                        recentJoinedID,
-                        value: code,
-                    });
-                });
-
                 socketRef.current.on("role-update", ({ socketId, role }) => {
                     if (socketId === socketRef.current.id) {
+                        // setUserRole(role);
                         // socket role change then only changing
                         const editor = editorRef.current;
                         if (editor) {
@@ -50,7 +43,6 @@ function Editor({ socketRef, roomId, userRole, setEditInstance }) {
         return () => {
             if (socketRef.current) {
                 socketRef.current.off("code-change");
-                socketRef.current.off("sync-code");
                 socketRef.current.off("role-update");
             }
         };
@@ -69,6 +61,7 @@ function Editor({ socketRef, roomId, userRole, setEditInstance }) {
     }
 
     return (
+        <>
         <MonacoEditor
             className="custom"
             height="68vh"
@@ -93,6 +86,8 @@ function Editor({ socketRef, roomId, userRole, setEditInstance }) {
                 />
             }
         />
+        <p></p>
+        </>
     );
 }
 

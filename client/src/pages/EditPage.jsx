@@ -107,9 +107,10 @@ function EditPage() {
                 }
                 setClients(clients);
                 if (editInstance) {
+                    console.log(editInstance?.getValue());
                     socketRef.current.emit("sync-code", {
                         recentJoinedID,
-                        value: editInstance.getValue() || "",
+                        value: editInstance?.getValue() || "",
                     });
                 }
             });
@@ -121,17 +122,6 @@ function EditPage() {
                 });
                 setClients((prev) => prev.filter((client) => client.socketID !== socketID));
             });
-
-            socketRef.current.on("role-update", ({ socketId, role }) => {
-                if (socketId === socketRef.current.id) {
-                    setUserRole(role);
-                }
-                setClients((prev) =>
-                    prev.map((client) =>
-                        client.socketID === socketId ? { ...client, role } : client
-                    )
-                );
-            });
         };
 
         init();
@@ -140,8 +130,8 @@ function EditPage() {
             if (socketRef.current) {
                 socketRef.current.disconnect();
                 socketRef.current.off("join");
+                socketRef.current.off("joined");
                 socketRef.current.off("disconnected");
-                socketRef.current.off("role-update");
                 socketRef.current.off("connect_error");
                 socketRef.current.off("connect_failed");
             }
@@ -162,9 +152,10 @@ function EditPage() {
                                 username={client.username}
                                 key={client.socketID}
                                 role={client.role}
+                                // role={userRole}
                                 isCurrentUser={client.socketID === socketRef.current.id}
-                                // onGrantPermission={() => grantPermission(client.socketID)}
-                                // onRevokePermission={() => revokePermission(client.socketID)}
+                                onGrantPermission={() => grantPermission(client.socketID)}
+                                onRevokePermission={() => revokePermission(client.socketID)}
                             />
                         ))}
                     </div>
@@ -177,6 +168,7 @@ function EditPage() {
             <div className="edit-wrap">
                 <Editor
                     userRole={userRole}
+                    setUserRole={setUserRole}
                     setEditInstance={setEditInstance}
                     socketRef={socketRef}
                     roomId={roomId}

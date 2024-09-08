@@ -13,7 +13,7 @@ const io = new Server(server, {
 	},
 });
 
-app.use(express.static("../client/dist"));
+// app.use(express.static("../client/dist"));
 
 const userSocketMap = {};
 const userRolesMap = {};
@@ -50,12 +50,6 @@ io.on("connection", (socket) => {
 		});
 
         console.log(clients);
-
-		if (clients.length > 1) {
-			io.to(clients[0].socketID).emit(ACTIONS.SYNC_CODE, {
-				recentJoinedID: socket.id,
-			});
-		}
 	});
 
 	socket.on(ACTIONS.CODE_CHANGE, ({ roomId, value }) => {
@@ -68,7 +62,6 @@ io.on("connection", (socket) => {
 
     socket.on("grant-perm", ({socketId, roomId}) => {
         userRolesMap[socketId] = "editor";
-        io.to(socketId).emit("role-update", {role: "editor"});
         io.to(roomId).emit("role-update", {
             socketId,
             role: "editor"
@@ -77,7 +70,6 @@ io.on("connection", (socket) => {
 
     socket.on("revoke-perm", ({socketId, roomId}) => {
         userRolesMap[socketId] = "viewer";
-        io.to(socketId).emit("role-update", {role: "viewer"});
         io.to(roomId).emit("role-update", {
             socketId,
             role: "viewer"

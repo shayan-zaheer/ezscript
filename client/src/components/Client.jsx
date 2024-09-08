@@ -5,16 +5,15 @@ function Client({ username, role, isCurrentUser, onGrantPermission, onRevokePerm
     return (
         <div className="client">
             <Avatar name={username} size={50} round="14px" />
-            <span className="username">{username} {isCurrentUser && "(You)"}</span>
-            <span className={`roleTag ${role}`}>{role}</span>
+            <span className="username">{`${username} (${role})`}</span>
 
-            {/* {!isCurrentUser && role === "viewer" && (
+            {!isCurrentUser && role === "viewer" && (
                 <button className="btn grantBtn" onClick={onGrantPermission}>
                     Grant Edit
                 </button>
             )}
 
-            {!isCurrentUser && role === "editor" && (
+            {/* {!isCurrentUser && role === "editor" && (
                 <button className="btn revokeBtn" onClick={onRevokePermission}>
                     Revoke Edit
                 </button>
