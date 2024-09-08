@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Editor as Edit } from "@monaco-editor/react";
+import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
 function Editor({ socketRef, roomId, onCodeChange, userRole }) {
@@ -7,6 +7,22 @@ function Editor({ socketRef, roomId, onCodeChange, userRole }) {
 
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
+
+    function handleOpenFile(e){
+        const file = e.target.files[0];
+        if(file){
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                const content = e.target.result;
+                if(editorRef.current){
+                    editorRef.current.setValue(content);
+                }
+            };
+
+            reader.readAsText(file);
+        }
+    }
 
     useEffect(() => {
         const init = () => {
@@ -64,7 +80,9 @@ function Editor({ socketRef, roomId, onCodeChange, userRole }) {
     }
 
     return (
-        <Edit
+        <>
+        <input type="file" onChange={handleOpenFile} accept=".js,.jsx" />
+        <MonacoEditor
             className="custom"
             height="100vh"
             language="javascript"
@@ -88,6 +106,7 @@ function Editor({ socketRef, roomId, onCodeChange, userRole }) {
                 />
             }
         />
+        </>
     );
 }
 

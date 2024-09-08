@@ -13,6 +13,8 @@ const io = new Server(server, {
 	},
 });
 
+app.use(express.static("../client/dist"));
+
 const userSocketMap = {};
 const userRolesMap = {};
 

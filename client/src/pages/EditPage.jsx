@@ -108,7 +108,6 @@ function EditPage() {
             });
 
             socketRef.current.on("role-update", ({ socketId, role }) => {
-                // Update only the role of the specific socket ID
                 if (socketId === socketRef.current.id) {
                     setUserRole(role);
                 }
