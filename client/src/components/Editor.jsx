@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Editor as Edit } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
-function Editor({ socketRef, roomId, onCodeChange, canEdit }) {
+function Editor({ socketRef, roomId, onCodeChange, userRole }) {
+    console.log(socketRef.current, userRole);
+
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
-    const [language, setLanguage] = useState("javascript");
 
     useEffect(() => {
         const init = () => {
@@ -27,16 +28,18 @@ function Editor({ socketRef, roomId, onCodeChange, canEdit }) {
                     });
                 });
 
-                socketRef.current.on("role-update", ({role}) => {
-                    if(role === "viewer"){
-                        editorRef.current.updateOptions({readOnly: true});
+                socketRef.current.on("role-update", ({ socketId, role }) => {
+                    if (socketId === socketRef.current.id) {
+                        // socket role change then only changing
+                        const editor = editorRef.current;
+                        if (editor) {
+                            editor.updateOptions({ readOnly: role === "viewer" });
+                        }
                     }
-                    else if(role === "editor"){
-                        editorRef.current.updateOptions({readOnly: false});
-                    }
-                })
+                });
             }
         };
+
         init();
 
         return () => {
@@ -46,9 +49,9 @@ function Editor({ socketRef, roomId, onCodeChange, canEdit }) {
                 socketRef.current.off("role-update");
             }
         };
-    }, [socketRef.current, editorRef.current]);
+    }, [socketRef.current]);
 
-    function handleCodeChange(value, event) {
+    function handleCodeChange(value) {
         if (!isUpdatingFromServer.current) {
             if (socketRef.current) {
                 socketRef.current.emit("code-change", {
@@ -64,13 +67,14 @@ function Editor({ socketRef, roomId, onCodeChange, canEdit }) {
         <Edit
             className="custom"
             height="100vh"
-            language={language}
+            language="javascript"
             theme="vs-dark"
             onMount={(editor) => {
                 editorRef.current = editor;
             }}
             options={{
-                readOnly: !canEdit
+                readOnly: userRole === "viewer",
+                fontSize: "20",
             }}
             onChange={handleCodeChange}
             loading={

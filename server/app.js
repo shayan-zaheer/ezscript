@@ -67,11 +67,19 @@ io.on("connection", (socket) => {
     socket.on("grant-perm", ({socketId, roomId}) => {
         userRolesMap[socketId] = "editor";
         io.to(socketId).emit("role-update", {role: "editor"});
+        io.to(roomId).emit("role-update", {
+            socketId,
+            role: "editor"
+        });
     });
 
     socket.on("revoke-perm", ({socketId, roomId}) => {
         userRolesMap[socketId] = "viewer";
         io.to(socketId).emit("role-update", {role: "viewer"});
+        io.to(roomId).emit("role-update", {
+            socketId,
+            role: "viewer"
+        });
     })
 
 	socket.on("disconnecting", () => {

@@ -131,17 +131,6 @@ body{
     line-height: 1.6;
 }
 
-.client {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border: 1px solid #444;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    background-color: #222;
-}
-
 .username {
     margin-left: 15px;
     color: #fff;

@@ -8,71 +8,71 @@ import { executeCode } from "../../output_api";
 
 function EditPage() {
     const codeRef = useRef(null);
-    const [clients, setClients] = useState([]);
-    const [userRole, setUserRole] = useState("viewer");
-    const [canEdit, setCanEdit] = useState(false);
-
-    const {roomId} = useParams();
-    const navigate = useNavigate();
     const location = useLocation();
-    const socketRef = useRef(null); 
+    const [clients, setClients] = useState([]);
+    const [output, setOutput] = useState("");
+    const [userRole, setUserRole] = useState(location.state?.role || "viewer");
 
-    async function copyRoomId(){
-        try{
+    const { roomId } = useParams();
+    const navigate = useNavigate();
+    const socketRef = useRef(null);
+
+    async function copyRoomId() {
+        try {
             await navigator.clipboard.writeText(roomId);
             toast.success("Room ID has been copied to your clipboard!", {
                 theme: "dark",
-                position: "top-right"
+                position: "top-right",
+            });
+        } catch (err) {
+            toast.error("Failed to copy Room ID!", {
+                theme: "dark",
+                position: "top-right",
             });
         }
-        catch(err){
-            toast.error(err, {
-                theme: "dark",
-                positon: "top-right"
-            })
+    }
+
+    async function runCode() {
+        const editor = codeRef.current;
+        const code = editor?.getValue();
+
+        if (!code) return;
+        try {
+            const { run: result } = await executeCode(code);
+            setOutput(result);
+        } catch (err) {
+            setOutput(err);
         }
     }
 
-    // async function runCode() {
-	// 	const editor = editorRef.current;
-	// 	const code = editor?.getValue();
-	// 	if (!code) return;
-	// 	try {
-	// 		const { run: result } = await executeCode(code);
-	// 		setOutput(result);
-	// 	} catch (err) {
-	// 		setOutput(err);
-	// 	}
-	// }
-
-    function grantPermission(socketId){
-        if(socketRef.current){
-            socketRef.current.emit("grant-perm", {socketId, roomId});
+    function grantPermission(socketId) {
+        if (socketRef.current) {
+            socketRef.current.emit("grant-perm", { socketId, roomId });
         }
     }
 
-    function revokePermission(socketId){
-        if(socketRef.current){
-            socketRef.current.emit("revoke-perm", {socketId, roomId});
+    function revokePermission(socketId) {
+        if (socketRef.current) {
+            socketRef.current.emit("revoke-perm", { socketId, roomId });
         }
     }
 
-    function leaveRoom(){
-        navigate("/")
+    function leaveRoom() {
+        navigate("/");
     }
 
     useEffect(() => {
         const init = async () => {
             socketRef.current = await initSocket();
 
-            socketRef.current.on("connect_error", err => handleErrors(err));
-            socketRef.current.on("connect_failed", err => handleErrors(err));
+            socketRef.current.on("connect_error", handleErrors);
+            socketRef.current.on("connect_failed", handleErrors);
 
-            function handleErrors(error){
+            function handleErrors(error) {
                 console.log("Socket error!", error);
                 toast.error("Socket connection failed, try again later!", {
                     theme: "dark",
-                    position: "top-right"
+                    position: "top-right",
                 });
                 navigate("/");
             }
@@ -80,86 +80,97 @@ function EditPage() {
             socketRef.current.emit("join", {
                 roomId,
                 username: location.state?.username,
-                role: location.state?.role
-            })
+                role: location.state?.role,
+            });
 
-            // listening for joined
-            socketRef.current.on("joined", ({username, clients, recentJoinedID, role}) => {
-                if(username !== location.state?.username){
-                    console.log(`${username} is joining room ${roomId}`);
+            socketRef.current.on("joined", ({ username, clients, recentJoinedID, role }) => {
+                if (username !== location.state?.username) {
                     toast.success(`${username} joined the room!`, {
                         theme: "dark",
-                        position: "top-right"
-                    })
+                        position: "top-right",
+                    });
                 }
                 setClients(clients);
-                setUserRole(role);
-                setCanEdit(role === "editor");
-                socketRef.current.emit("sync-code", {
-                    value: codeRef.current,
-                    recentJoinedID
-                });
-            })
-            
-            // listening for disconnect
-            socketRef.current.on("disconnected", ({socketID, username}) => {
+                if (codeRef.current) {
+                    socketRef.current.emit("sync-code", {
+                        recentJoinedID,
+                        value: codeRef.current.getValue() || "",
+                    });
+                }
+            });
+
+            socketRef.current.on("disconnected", ({ socketID, username }) => {
                 toast.success(`${username} left the room!`, {
                     theme: "dark",
-                    position: "top-right"
+                    position: "top-right",
                 });
-                setClients(prev => {
-                    return prev.filter((client) => client.socketID != socketID);
-                })
-            })
+                setClients((prev) => prev.filter((client) => client.socketID !== socketID));
+            });
 
-            socketRef.current.on("update-role", ({role}) => {
-                setUserRole(role);
-            })
+            socketRef.current.on("role-update", ({ socketId, role }) => {
+                // Update only the role of the specific socket ID
+                if (socketId === socketRef.current.id) {
+                    setUserRole(role);
+                }
+                setClients((prev) =>
+                    prev.map((client) =>
+                        client.socketID === socketId ? { ...client, role } : client
+                    )
+                );
+            });
         };
-        
+
         init();
 
         return () => {
-            socketRef.current.disconnect();
-            socketRef.current.off("join");
-            socketRef.current.off("disconnected");
-            socketRef.current.off("role-update");
-        }
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+                socketRef.current.off("join");
+                socketRef.current.off("disconnected");
+                socketRef.current.off("role-update");
+                socketRef.current.off("connect_error");
+                socketRef.current.off("connect_failed");
+            }
+        };
+    }, [navigate, roomId, location.state]);
 
-    }, []);
+    if (!location.state) return <Navigate to="/" />;
 
-    !location.state && <Navigate to="/" />
-
-	return (
-		<div className="main-wrap">
-			<div className="nav-bar">
-				<div className="in-nav">
+    return (
+        <div className="main-wrap">
+            <div className="nav-bar">
+                <div className="in-nav">
                     <ToastContainer />
-					<h3>Connected</h3>
-					<div className="connect-list">
-						{clients.map((client) => (
-							<Client
-								username={client.username}
-								key={client.socketId}
+                    <h3>Connected</h3>
+                    <div className="connect-list">
+                        {clients.map((client) => (
+                            <Client
+                                username={client.username}
+                                key={client.socketID}
                                 role={client.role}
                                 isCurrentUser={client.socketID === socketRef.current.id}
                                 onGrantPermission={() => grantPermission(client.socketID)}
                                 onRevokePermission={() => revokePermission(client.socketID)}
-							/>
-						))}
-					</div>
-				</div>
+                            />
+                        ))}
+                    </div>
+                </div>
                 <button onClick={copyRoomId} className="btn copy">Copy Room ID</button>
-                <button className="btn run">Run Code</button>
+                <button onClick={runCode} className="btn run">Run Code</button>
                 <button onClick={leaveRoom} className="btn leave">Leave</button>
-			</div>
-			<div className="edit-wrap">
-                <Editor canEdit={canEdit} onCodeChange={(code) => {
-                    codeRef.current = code;
-                }} socketRef={socketRef} roomId={roomId}/>
             </div>
-		</div>
-	);
+            <div className="edit-wrap">
+                <Editor
+                    userRole={userRole}
+                    onCodeChange={(code) => {
+                        codeRef.current = code;
+                    }}
+                    socketRef={socketRef}
+                    roomId={roomId}
+                />
+            </div>
+        </div>
+    );
 }
 
 export default EditPage;
