@@ -71,7 +71,7 @@ function Editor({ socketRef, roomId, userRole, setEditInstance }) {
     return (
         <MonacoEditor
             className="custom"
-            height="100vh"
+            height="68vh"
             language="javascript"
             theme="vs-dark"
             onMount={(editor) => {

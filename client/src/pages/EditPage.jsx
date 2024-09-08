@@ -169,7 +169,7 @@ function EditPage() {
                         ))}
                     </div>
                 </div>
-                <label class="btn run">Open File<input onChange={handleOpenFile} accept=".js,.jsx" type="file" /></label>
+                <label className="btn open">Open File<input onChange={handleOpenFile} accept=".js,.jsx" type="file" /></label>
                 <button onClick={copyRoomId} className="btn copy">Copy Room ID</button>
                 <button onClick={runCode} className="btn run">Run Code</button>
                 <button onClick={leaveRoom} className="btn leave">Leave</button>
@@ -177,9 +177,6 @@ function EditPage() {
             <div className="edit-wrap">
                 <Editor
                     userRole={userRole}
-                    // onCodeChange={(code) => {
-                    //     setCode(code)
-                    // }}
                     setEditInstance={setEditInstance}
                     socketRef={socketRef}
                     roomId={roomId}

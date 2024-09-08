@@ -125,29 +125,21 @@ body{
     width: 100%;
 }
 
-.custom{
-    /* min-height: calc(100vh - 20px); */
-    font-size: 25px;
-    line-height: 1.6;
+.open{
+    background-color: #4aed88;
+    margin-bottom: 20px;
+    text-align: center;
+    color: black;
+}
+
+input[type="file"]{
+    display: none;
 }
 
 .username {
     margin-left: 15px;
     color: #fff;
     font-weight: bold;
-}
-
-/* .custom-file-upload {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-} */
-
-input[type="file"]{
-    display: none;
 }
 
 .roleTag {
@@ -160,11 +152,11 @@ input[type="file"]{
 }
 
 .roleTag.editor {
-    background-color: #4caf50; /* Green for editor */
+    background-color: #4caf50;
 }
 
 .roleTag.viewer {
-    background-color: #f44336; /* Red for viewer */
+    background-color: #f44336;
 }
 
 .grantBtn {
