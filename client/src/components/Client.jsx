@@ -8,7 +8,7 @@ function Client({ username, role, isCurrentUser, onGrantPermission, onRevokePerm
             <span className="username">{username} {isCurrentUser && "(You)"}</span>
             <span className={`roleTag ${role}`}>{role}</span>
 
-            {!isCurrentUser && role === "viewer" && (
+            {/* {!isCurrentUser && role === "viewer" && (
                 <button className="btn grantBtn" onClick={onGrantPermission}>
                     Grant Edit
                 </button>
@@ -18,7 +18,7 @@ function Client({ username, role, isCurrentUser, onGrantPermission, onRevokePerm
                 <button className="btn revokeBtn" onClick={onRevokePermission}>
                     Revoke Edit
                 </button>
-            )}
+            )} */}
         </div>
     );
 }

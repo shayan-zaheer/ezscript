@@ -137,6 +137,19 @@ body{
     font-weight: bold;
 }
 
+/* .custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+} */
+
+input[type="file"]{
+    display: none;
+}
+
 .roleTag {
     padding: 5px 10px;
     border-radius: 5px;

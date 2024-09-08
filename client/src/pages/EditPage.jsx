@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { executeCode } from "../../output_api";
 
 function EditPage() {
-    const codeRef = useRef(null);
+    const [editInstance, setEditInstance] = useState(null);
     const location = useLocation();
     const [clients, setClients] = useState([]);
     const [output, setOutput] = useState("");
@@ -33,15 +33,30 @@ function EditPage() {
     }
 
     async function runCode() {
-        const editor = codeRef.current;
-        const code = editor?.getValue();
+        if (editInstance){
+            try {
+                const code = editInstance?.getValue();
+                const { run: result } = await executeCode(code);
+                setOutput(result.output);
+                console.log(output);
+            } catch (err) {
+                setOutput(err);
+            }
+        }
+    }
 
-        if (!code) return;
-        try {
-            const { run: result } = await executeCode(code);
-            setOutput(result);
-        } catch (err) {
-            setOutput(err);
+    function handleOpenFile(e){
+        const file = e.target.files[0];
+        if(file){
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                const content = e.target.result;
+                if(editInstance){
+                    editInstance?.setValue(content);
+                }
+            };
+            reader.readAsText(file);
         }
     }
 
@@ -91,10 +106,10 @@ function EditPage() {
                     });
                 }
                 setClients(clients);
-                if (codeRef.current) {
+                if (editInstance) {
                     socketRef.current.emit("sync-code", {
                         recentJoinedID,
-                        value: codeRef.current.getValue() || "",
+                        value: editInstance.getValue() || "",
                     });
                 }
             });
@@ -148,12 +163,13 @@ function EditPage() {
                                 key={client.socketID}
                                 role={client.role}
                                 isCurrentUser={client.socketID === socketRef.current.id}
-                                onGrantPermission={() => grantPermission(client.socketID)}
-                                onRevokePermission={() => revokePermission(client.socketID)}
+                                // onGrantPermission={() => grantPermission(client.socketID)}
+                                // onRevokePermission={() => revokePermission(client.socketID)}
                             />
                         ))}
                     </div>
                 </div>
+                <label class="btn run">Open File<input onChange={handleOpenFile} accept=".js,.jsx" type="file" /></label>
                 <button onClick={copyRoomId} className="btn copy">Copy Room ID</button>
                 <button onClick={runCode} className="btn run">Run Code</button>
                 <button onClick={leaveRoom} className="btn leave">Leave</button>
@@ -161,9 +177,10 @@ function EditPage() {
             <div className="edit-wrap">
                 <Editor
                     userRole={userRole}
-                    onCodeChange={(code) => {
-                        codeRef.current = code;
-                    }}
+                    // onCodeChange={(code) => {
+                    //     setCode(code)
+                    // }}
+                    setEditInstance={setEditInstance}
                     socketRef={socketRef}
                     roomId={roomId}
                 />
