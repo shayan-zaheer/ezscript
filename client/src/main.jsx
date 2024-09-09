@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import HomePage from './pages/HomePage.jsx';
 import EditPage from './pages/EditPage.jsx';
-import "./App.css";
+import "./index.css";
 import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([

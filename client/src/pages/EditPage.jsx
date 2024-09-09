@@ -152,6 +152,7 @@ function EditPage() {
                                 username={client.username}
                                 key={client.socketID}
                                 role={client.role}
+                                setUserRole={setUserRole}
                                 // role={userRole}
                                 isCurrentUser={client.socketID === socketRef.current.id}
                                 onGrantPermission={() => grantPermission(client.socketID)}

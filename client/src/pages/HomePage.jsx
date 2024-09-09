@@ -47,33 +47,33 @@ function HomePage() {
     }
 
     return (
-        <div className="home-wrap">
-            <div className="form-wrap">
-                <h5 className="label">Paste invitation</h5>
-                <div className="inputs">
+        <div className="flex justify-center items-center text-[#f5f5f5] h-screen">
+            <div className="bg-[#282a36] p-[20px] rounded-[10px] w-[400px] max-w-[90%]">
+                <h5 className="mb-[20px]">Paste invitation</h5>
+                <div className="flex flex-col">
                     <input
                         onKeyUp={handleEnter}
                         type="text"
                         ref={inputRef}
-                        className="input-box"
+                        className="p-[10px] rounded-[5px] outline-none border-none mb-[15px] text-[#212121] bg-[#eee] text-[16px] font-bold"
                         placeholder="ROOM ID"
                     />
                     <input
                         onKeyUp={handleEnter}
                         type="text"
                         ref={userRef}
-                        className="input-box"
+                        className="p-[10px] rounded-[5px] outline-none border-none mb-[15px] text-[#212121] bg-[#eee] text-[16px] font-bold"
                         placeholder="USERNAME"
                     />
                     <select
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
-                        className="input-box"
+                        className="p-[10px] rounded-[5px] outline-none border-none mb-[15px] text-[#212121] bg-[#eee] text-[16px] font-bold"
                     >
                         <option value="editor">Editor</option>
                         <option value="viewer">Viewer</option>
                     </select>
-                    <button onClick={joinRoom} className="btn join">
+                    <button onClick={joinRoom} className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] w-full ml-auto">
                         Join
                     </button>
                     <span className="room-create">
