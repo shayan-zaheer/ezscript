@@ -76,7 +76,7 @@ function HomePage() {
                     <button onClick={joinRoom} className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] w-full ml-auto hover:bg-[#2b824c]">
                         Join
                     </button>
-                    <span className="room-create">
+                    <span className="mt-[20px] w-full">
                         If you don't have an invite then create &nbsp;
                         <a
                             onClick={createNewRoom}
