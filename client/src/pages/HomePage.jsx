@@ -73,7 +73,7 @@ function HomePage() {
                         <option value="editor">Editor</option>
                         <option value="viewer">Viewer</option>
                     </select>
-                    <button onClick={joinRoom} className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] w-full ml-auto hover:bg-[#2b824c]">
+                    <button onClick={joinRoom} className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] w-full ml-auto text-black hover:bg-[#2b824c]">
                         Join
                     </button>
                     <span className="mt-[20px] w-full">

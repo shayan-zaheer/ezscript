@@ -186,23 +186,24 @@ function EditPage() {
 				</label>
 				<button
 					onClick={copyRoomId}
-					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out"
+					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out text-black bg-[#e3e2e2] hover:bg-[#dfd8d8b8]"
 				>
 					Copy Room ID
 				</button>
 				<button
 					onClick={runCode}
-					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out mt-[20px] w-full"
+					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out mt-[20px] w-full text-black bg-[#e3e2e2] hover:bg-[#dfd8d8b8]"
 				>
 					Run Code
 				</button>
 				<button
 					onClick={leaveRoom}
-					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 bg-[#4aed88] ease-in-out mt-[20px] w-full hover:bg-[#2b824c]"
+					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 bg-[#4aed88] ease-in-out mt-[20px] w-full text-black hover:bg-[#2b824c]"
 				>
 					Leave
 				</button>
 			</div>
+            <div className="edit-wrap">
 			<Editor
 				userRole={userRole}
 				setUserRole={setUserRole}
@@ -210,6 +211,7 @@ function EditPage() {
 				socketRef={socketRef}
 				roomId={roomId}
 			/>
+            </div>
 		</div>
 	);
 }
