@@ -73,7 +73,7 @@ function HomePage() {
                         <option value="editor">Editor</option>
                         <option value="viewer">Viewer</option>
                     </select>
-                    <button onClick={joinRoom} className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] w-full ml-auto">
+                    <button onClick={joinRoom} className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] w-full ml-auto hover:bg-[#2b824c]">
                         Join
                     </button>
                     <span className="room-create">
@@ -81,7 +81,7 @@ function HomePage() {
                         <a
                             onClick={createNewRoom}
                             href=""
-                            className="create-new"
+                            className="text-[#4aed88] no-underline border-b-[1px] border-b-solid border-b-[#4aed88] transition-all duration-300ms ease-in-out hover:border-b-[#2b824c] hover:text-[#2b824c]"
                         >
                             new room
                         </a>
