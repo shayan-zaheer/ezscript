@@ -162,8 +162,6 @@ function EditPage() {
 								username={client.username}
 								key={client.socketID}
 								role={client.role}
-								// setUserRole={setUserRole}
-								// role={userRole}
 								isCurrentUser={
 									client.socketID === socketRef.current.id
 								}
@@ -177,7 +175,7 @@ function EditPage() {
 						))}
 					</div>
 				</div>
-				<label className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] mb-[20px] text-black text-center">
+				<label className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] mb-[20px] text-black text-center hover:bg-[#2b824c]">
 					Open File
 					<input
 						className="hidden"
@@ -200,7 +198,7 @@ function EditPage() {
 				</button>
 				<button
 					onClick={leaveRoom}
-					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 bg-[#4aed88] ease-in-out mt-[20px] w-full"
+					className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 bg-[#4aed88] ease-in-out mt-[20px] w-full hover:bg-[#2b824c]"
 				>
 					Leave
 				</button>
