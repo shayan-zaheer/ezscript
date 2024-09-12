@@ -50,6 +50,7 @@ function HomePage() {
         <div className="flex justify-center items-center text-[#f5f5f5] h-screen">
             <div className="bg-[#0C1419] drop-shadow-lg p-[20px] rounded-[10px] w-[400px] max-w-[90%]">
                 <div className="flex flex-col">
+                    <img src="./EZScript.png" className="mb-[5px]"/>
                     <input
                         onKeyUp={handleEnter}
                         type="text"
