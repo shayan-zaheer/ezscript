@@ -9,11 +9,11 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
 
-    useEffect(() => {
-        if(editorRef.current){
-            setEditInstance(editorRef.current);
-        }
-    }, [editorRef.current, socketRef.current]);
+    // useEffect(() => {
+    //     if(editorRef.current){
+    //         setEditInstance(editorRef.current);
+    //     }
+    // }, [editorRef.current]);
 
     useEffect(() => {
         const init = () => {
@@ -22,6 +22,7 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
                     if (editorRef.current && value !== editorRef.current?.getValue()) {
                         isUpdatingFromServer.current = true;
                         editorRef.current?.setValue(value);
+                        setEditInstance(editorRef.current);
                     }
                 });
 
@@ -69,6 +70,7 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
             theme="vs-dark"
             onMount={(editor) => {
                 editorRef.current = editor;
+                setEditInstance(editor);
             }}
             options={{
                 readOnly: userRole === "viewer",

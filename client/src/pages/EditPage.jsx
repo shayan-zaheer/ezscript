@@ -12,7 +12,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { executeCode } from "../../output_api";
 
 function EditPage() {
-	const [editInstance, setEditInstance] = useState(null);
+	const [editInstance, setEditInstance] = useState("");
 	const location = useLocation();
 	const [clients, setClients] = useState([]);
 	const [output, setOutput] = useState("");
@@ -38,17 +38,22 @@ function EditPage() {
 	}
 
 	async function runCode() {
-		if (editInstance) {
-			try {
-				const code = editInstance?.getValue();
-				const { run: result } = await executeCode(code);
-				setOutput(result.output);
-				console.log(output);
-			} catch (err) {
-				setOutput(err);
-			}
-		}
-	}
+        if (editInstance) {
+            try {
+                const code = editInstance?.getValue(); // Get code from the editor
+                const { run: result } = await executeCode(code);
+                console.log(result);
+                setOutput(result.output);
+            } catch (err) {
+                setOutput(err.message); // Handle errors gracefully
+            }
+        } else {
+            toast.error("Code instance not available!", {
+                theme: "dark",
+                position: "top-right",
+            });
+        }
+    }    
 
 	function handleOpenFile(e) {
 		const file = e.target.files[0];
