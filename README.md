@@ -6,6 +6,10 @@
 
 https://github.com/user-attachments/assets/b96d0f11-3d08-4c42-ad19-52a0716fb1f5
 
+- ** Handling multiple users and assigning roles **
+
+https://github.com/user-attachments/assets/0fb408ba-22af-4596-b3a2-d75838a25b48
+
 ## Features
 
 - **Real-time collaboration**: Multiple users can collaborate on the same code in real-time.
