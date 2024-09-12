@@ -2,6 +2,10 @@
 
 **EZScript** is a real-time collaborative code editor built using the MERN stack (MongoDB, Express, React, Node.js) and integrated with Socket.io for live collaboration. The platform allows multiple users to edit and run code simultaneously, supporting JavaScript only for now, via the Piston API.
 
+## Demo of the Application
+
+https://github.com/user-attachments/assets/b96d0f11-3d08-4c42-ad19-52a0716fb1f5
+
 ## Features
 
 - **Real-time collaboration**: Multiple users can collaborate on the same code in real-time.
