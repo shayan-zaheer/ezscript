@@ -40,12 +40,12 @@ function EditPage() {
 	async function runCode() {
         if (editInstance) {
             try {
-                const code = editInstance?.getValue(); // Get code from the editor
+                const code = editInstance?.getValue();
                 const { run: result } = await executeCode(code);
                 console.log(result);
                 setOutput(result.output);
             } catch (err) {
-                setOutput(err.message); // Handle errors gracefully
+                setOutput(err.message);
             }
         } else {
             toast.error("Code instance not available!", {
@@ -163,9 +163,12 @@ function EditPage() {
 	return (
 		<div className="grid grid-cols-[230px,1fr] h-screen">
 			<div className="bg-[#1a2025] p-[16px] text-white flex flex-col">
+                    <div className="flex gap-2">
+                        <div className="bg-purple-800 w-4 h-4 mb-3"></div>Editor
+                        <div className="bg-orange-800 w-4 h-4 mb-3"></div>Viewer
+                    </div>
 				<div className="flex-1">
 					<ToastContainer />
-					<h3>Connected</h3>
 					<div className="flex items-center flex-wrap gap-[20px]">
 						{clients.map((client) => (
 							<Client
@@ -217,7 +220,6 @@ function EditPage() {
 			<Editor
                 output={output}
 				userRole={userRole}
-				setUserRole={setUserRole}
 				setEditInstance={setEditInstance}
 				socketRef={socketRef}
 				roomId={roomId}

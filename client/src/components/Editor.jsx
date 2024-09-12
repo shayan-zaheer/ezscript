@@ -4,16 +4,9 @@ import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
 function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
-    // console.log(socketRef.current, userRole);
 
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
-
-    // useEffect(() => {
-    //     if(editorRef.current){
-    //         setEditInstance(editorRef.current);
-    //     }
-    // }, [editorRef.current]);
 
     useEffect(() => {
         const init = () => {
