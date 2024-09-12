@@ -210,6 +210,7 @@ function EditPage() {
 			</div>
             <div className="edit-wrap">
 			<Editor
+                output={output}
 				userRole={userRole}
 				setUserRole={setUserRole}
 				setEditInstance={setEditInstance}

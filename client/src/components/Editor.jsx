@@ -1,8 +1,9 @@
+import Textarea from '@mui/joy/Textarea';
 import { useEffect, useRef } from "react";
 import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
-function Editor({ socketRef, roomId, userRole, setUserRole, setEditInstance }) {
+function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
     // console.log(socketRef.current, userRole);
 
     const editorRef = useRef(null);
@@ -85,7 +86,7 @@ function Editor({ socketRef, roomId, userRole, setUserRole, setEditInstance }) {
                 />
             }
         />
-        <p></p>
+        <Textarea style={{backgroundColor: "#1E1E1E"}} className="mt-[10px]" placeholder="See output here!" disabled minRows={8} variant="soft" value={output} />
         </>
     );
 }
