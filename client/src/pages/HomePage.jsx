@@ -48,8 +48,7 @@ function HomePage() {
 
     return (
         <div className="flex justify-center items-center text-[#f5f5f5] h-screen">
-            <div className="bg-[#282a36] p-[20px] rounded-[10px] w-[400px] max-w-[90%]">
-                <h5 className="mb-[20px]">Paste invitation</h5>
+            <div className="bg-[#0C1419] drop-shadow-lg p-[20px] rounded-[10px] w-[400px] max-w-[90%]">
                 <div className="flex flex-col">
                     <input
                         onKeyUp={handleEnter}

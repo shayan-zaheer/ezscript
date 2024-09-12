@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 body{
-    @apply m-0 font-sans bg-[#1c1e29]; 
+    @apply m-0 font-sans bg-[#1a2025];
 }

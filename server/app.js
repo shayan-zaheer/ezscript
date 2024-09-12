@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
 		socket.broadcast.to(roomId).emit(ACTIONS.CODE_CHANGE, { value });
 	});
 
-	socket.on(ACTIONS.SYNC_CODE, ({ recentJoinedID, value }) => {
+	socket.on("sync-code", ({ recentJoinedID, value }) => {
 		io.to(recentJoinedID).emit(ACTIONS.CODE_CHANGE, { value });
 	});
 

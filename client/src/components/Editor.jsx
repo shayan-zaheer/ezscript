@@ -3,7 +3,7 @@ import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 
 function Editor({ socketRef, roomId, userRole, setUserRole, setEditInstance }) {
-    console.log(socketRef.current, userRole);
+    // console.log(socketRef.current, userRole);
 
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
@@ -12,16 +12,15 @@ function Editor({ socketRef, roomId, userRole, setUserRole, setEditInstance }) {
         if(editorRef.current){
             setEditInstance(editorRef.current);
         }
-    }, [editorRef.current]);
+    }, [editorRef.current, socketRef.current]);
 
     useEffect(() => {
         const init = () => {
             if (socketRef.current) {
                 socketRef.current.on("code-change", ({ value }) => {
-                    const editor = editorRef.current;
-                    if (editor && value !== editor.getValue()) {
+                    if (editorRef.current && value !== editorRef.current?.getValue()) {
                         isUpdatingFromServer.current = true;
-                        editor.setValue(value);
+                        editorRef.current?.setValue(value);
                     }
                 });
 

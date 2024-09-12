@@ -113,13 +113,18 @@ function EditPage() {
 						});
 					}
 					setClients(clients);
-					if (editInstance) {
-						console.log(editInstance?.getValue());
-						socketRef.current.emit("sync-code", {
-							recentJoinedID,
-							value: editInstance?.getValue() || "",
-						});
-					}
+                    console.log(clients);
+					// if (editInstance) {
+
+					// }
+                    console.log("realest realest!!")
+                    if(editInstance){
+                            console.log(editInstance?.getValue())
+                            socketRef.current.emit("sync-code", {
+                                recentJoinedID,
+                                value: editInstance?.getValue() || "",
+                            });
+                        }
 				}
 			);
 
@@ -152,7 +157,7 @@ function EditPage() {
 
 	return (
 		<div className="grid grid-cols-[230px,1fr] h-screen">
-			<div className="bg-[#1c1e29] p-[16px] text-white flex flex-col">
+			<div className="bg-[#1a2025] p-[16px] text-white flex flex-col">
 				<div className="flex-1">
 					<ToastContainer />
 					<h3>Connected</h3>
