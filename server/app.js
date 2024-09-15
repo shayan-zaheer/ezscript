@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
         userRolesMap[socketId] = "editor";
         io.to(roomId).emit("role-update", {
             socketId,
-            role: "editor"
+            role: "editor",
         });
     });
 

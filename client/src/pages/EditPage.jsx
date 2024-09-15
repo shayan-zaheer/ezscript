@@ -118,11 +118,6 @@ function EditPage() {
 						});
 					}
 					setClients(clients);
-                    console.log(clients);
-					// if (editInstance) {
-
-					// }
-                    console.log("realest realest!!")
                     if(editInstance){
                             console.log(editInstance?.getValue())
                             socketRef.current.emit("sync-code", {
@@ -175,6 +170,7 @@ function EditPage() {
 								username={client.username}
 								key={client.socketID}
 								role={client.role}
+                                // role={userRole}
 								isCurrentUser={
 									client.socketID === socketRef.current.id
 								}
@@ -220,6 +216,7 @@ function EditPage() {
 			<Editor
                 output={output}
 				userRole={userRole}
+                setUserRole={setUserRole}
 				setEditInstance={setEditInstance}
 				socketRef={socketRef}
 				roomId={roomId}
