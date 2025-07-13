@@ -3,12 +3,14 @@ import {io} from "socket.io-client";
 export const initSocket = async () => {
     const options = {
         "force new connection": true,
-        reconnectionAttempt: "Infinity",
+        reconnectionAttempts: 10,
         timeout: 10000,
-        transports: ['websocket']
+        transports: ['websocket'],
+        autoConnect: true
     };
 
-    console.log(import.meta.env.VITE_BACKEND_URL);  
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+    console.log("Connecting to:", backendUrl);  
 
-    return io(import.meta.env.VITE_BACKEND_URL, options);
+    return io(backendUrl, options);
 }
