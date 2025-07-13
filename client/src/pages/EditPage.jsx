@@ -187,72 +187,138 @@ function EditPage() {
     if (!location.state) return <Navigate to="/" />;
 
     return (
-        <div className="grid grid-cols-[230px,1fr] h-screen">
-            <div className="bg-[#1a2025] p-[16px] text-white flex flex-col">
-                <div className="flex gap-2">
-                    <div className="bg-purple-800 w-4 h-4 mb-3"></div>Editor
-                    <div className="bg-orange-800 w-4 h-4 mb-3"></div>Viewer
-                </div>
-                <div className="flex-1">
-                    <ToastContainer />
-                    <div className="flex items-center flex-wrap gap-[20px]">
-                        {clients.map((client) => (
-                            <Client
-                                username={client.username}
-                                key={client.socketID}
-                                role={client.role}
-                                currentUserRole={userRole}
-                                isCurrentUser={
-                                    client.socketID === socketRef.current?.id
-                                }
-                                onGrantPermission={() =>
-                                    grantPermission(client.socketID)
-                                }
-                                onRevokePermission={() =>
-                                    revokePermission(client.socketID)
-                                }
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+            <div className="grid grid-cols-[280px,1fr] h-screen">
+                <div className="sidebar p-6 text-white flex flex-col relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-full blur-3xl animate-pulse"></div>
+                        <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                    </div>
+                    
+                    <div className="relative z-10 mb-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                                <span className="text-xl font-bold">⚡</span>
+                            </div>
+                            <h1 className="text-2xl font-bold glow-text">EZScript</h1>
+                        </div>
+                        
+                        <div className="glass-dark rounded-xl p-4 mb-6">
+                            <h3 className="text-sm font-semibold mb-3 text-gray-300">ROLES</h3>
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-3">
+                                    <div className="role-indicator editor"></div>
+                                    <span className="text-sm font-medium">Editor</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="role-indicator viewer"></div>
+                                    <span className="text-sm font-medium">Viewer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 relative z-10">
+                        <div className="glass-dark rounded-xl p-4 mb-6">
+                            <h3 className="text-sm font-semibold mb-4 text-gray-300 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-green-500 rounded-full pulse-green"></span>
+                                CONNECTED USERS
+                            </h3>
+                            <div className="flex flex-col gap-4 max-h-60 overflow-y-auto">
+                                {clients.map((client) => (
+                                    <Client
+                                        username={client.username}
+                                        key={client.socketID}
+                                        role={client.role}
+                                        currentUserRole={userRole}
+                                        isCurrentUser={
+                                            client.socketID === socketRef.current?.id
+                                        }
+                                        onGrantPermission={() =>
+                                            grantPermission(client.socketID)
+                                        }
+                                        onRevokePermission={() =>
+                                            revokePermission(client.socketID)
+                                        }
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4 relative z-10">
+                        <label className="file-input-wrapper block p-4 rounded-xl text-center cursor-pointer transition-all duration-300 font-medium text-white">
+                            <div className="flex items-center justify-center gap-2">
+                                <span className="text-lg">📁</span>
+                                Open File
+                            </div>
+                            <input
+                                className="hidden"
+                                onChange={handleOpenFile}
+                                accept=".js,.jsx,.ts,.tsx"
+                                type="file"
                             />
-                        ))}
+                        </label>
+
+                        <button
+                            onClick={copyRoomId}
+                            className="w-full p-4 rounded-xl font-medium transition-all duration-300 glass-dark hover:bg-white/20 text-white flex items-center justify-center gap-2"
+                        >
+                            <span className="text-lg">📋</span>
+                            Copy Room ID
+                        </button>
+
+                        <button
+                            onClick={runCode}
+                            className="w-full p-4 rounded-xl font-medium btn-primary flex items-center justify-center gap-2"
+                        >
+                            <span className="text-lg">▶️</span>
+                            Run Code
+                        </button>
+
+                        <button
+                            onClick={leaveRoom}
+                            className="w-full p-4 rounded-xl font-medium btn-success flex items-center justify-center gap-2"
+                        >
+                            <span className="text-lg">🚪</span>
+                            Leave Room
+                        </button>
                     </div>
                 </div>
-                <label className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out bg-[#4aed88] mb-[20px] text-black text-center hover:bg-[#2b824c]">
-                    Open File
-                    <input
-                        className="hidden"
-                        onChange={handleOpenFile}
-                        accept=".js,.jsx"
-                        type="file"
-                    />
-                </label>
-                <button
-                    onClick={copyRoomId}
-                    className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out text-black bg-[#e3e2e2] hover:bg-[#dfd8d8b8]"
-                >
-                    Copy Room ID
-                </button>
-                <button
-                    onClick={runCode}
-                    className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 ease-in-out mt-[20px] w-full text-black bg-[#e3e2e2] hover:bg-[#dfd8d8b8]"
-                >
-                    Run Code
-                </button>
-                <button
-                    onClick={leaveRoom}
-                    className="border-none p-[10px] rounded-[5px] text-[16px] cursor-pointer transition-all duration-300 bg-[#4aed88] ease-in-out mt-[20px] w-full text-black hover:bg-[#2b824c]"
-                >
-                    Leave
-                </button>
+
+                <div className="relative p-6">
+                    <div className="editor-wrapper h-full">
+                        <Editor
+                            output={output}
+                            userRole={userRole}
+                            setUserRole={setUserRole}
+                            setEditInstance={setEditInstance}
+                            socketRef={socketRef}
+                            roomId={roomId}
+                        />
+                    </div>
+                </div>
             </div>
-            <div className="edit-wrap">
-                <Editor
-                    output={output}
-                    userRole={userRole}
-                    setUserRole={setUserRole}
-                    setEditInstance={setEditInstance}
-                    socketRef={socketRef}
-                    roomId={roomId}
-                />
-            </div>
+            
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                toastStyle={{
+                    background: 'rgba(15, 23, 42, 0.9)',
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    color: 'white'
+                }}
+            />
         </div>
     );
 }

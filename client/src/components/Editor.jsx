@@ -1,4 +1,3 @@
-import Textarea from "@mui/joy/Textarea";
 import { useEffect, useRef } from "react";
 import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
@@ -55,47 +54,92 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
     }
 
     return (
-        <>
-            <MonacoEditor
-                className="custom"
-                height="68vh"
-                language="javascript"
-                theme="vs-dark"
-                onMount={(editor) => {
-                    editorRef.current = editor;
-                    setEditInstance(editor);
+        <div className="h-full flex flex-col">
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-800 to-slate-700 rounded-t-xl border-b border-white/10">
+                <div className="flex items-center gap-3">
+                    <div className="flex gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
+                    <span className="text-sm font-medium text-gray-300">main.js</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                        userRole === "editor" 
+                            ? "bg-purple-500/20 text-purple-300 border border-purple-500/30" 
+                            : "bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                    }`}>
+                        {userRole === "editor" ? "🔓 Editor" : "👁️ Viewer"}
+                    </span>
+                </div>
+            </div>
 
-                    if (socketRef.current && !hasRequestedSync.current) {
-                        socketRef.current.emit("request-code-sync", { roomId });
-                        hasRequestedSync.current = true;
+            <div className="flex-1 relative">
+                <MonacoEditor
+                    className="custom"
+                    height="100%"
+                    language="javascript"
+                    theme="vs-dark"
+                    onMount={(editor) => {
+                        editorRef.current = editor;
+                        setEditInstance(editor);
+
+                        if (socketRef.current && !hasRequestedSync.current) {
+                            socketRef.current.emit("request-code-sync", { roomId });
+                            hasRequestedSync.current = true;
+                        }
+                    }}
+                    options={{
+                        readOnly: userRole === "viewer",
+                        fontSize: 16,
+                        fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace",
+                        lineHeight: 1.6,
+                        padding: { top: 20, bottom: 20 },
+                        scrollBeyondLastLine: false,
+                        minimap: { enabled: true },
+                        bracketPairColorization: { enabled: true },
+                        guides: {
+                            bracketPairs: true,
+                            indentation: true
+                        },
+                        smoothScrolling: true,
+                        cursorBlinking: 'smooth',
+                        renderLineHighlight: 'all',
+                        wordWrap: 'on',
+                    }}
+                    onChange={handleCodeChange}
+                    loading={
+                        <div className="flex items-center justify-center h-full bg-slate-900">
+                            <div className="text-center">
+                                <DNA
+                                    visible={true}
+                                    height="80"
+                                    width="80"
+                                    ariaLabel="dna-loading"
+                                    wrapperStyle={{}}
+                                    wrapperClass="dna-wrapper"
+                                />
+                                <p className="text-gray-400 mt-4 loading-dots">Loading editor</p>
+                            </div>
+                        </div>
                     }
-                }}
-                options={{
-                    readOnly: userRole === "viewer",
-                    fontSize: "20",
-                }}
-                onChange={handleCodeChange}
-                loading={
-                    <DNA
-                        visible={true}
-                        height="80"
-                        width="80"
-                        ariaLabel="dna-loading"
-                        wrapperStyle={{}}
-                        wrapperClass="dna-wrapper"
-                    />
-                }
-            />
-            <Textarea
-                style={{ backgroundColor: "#1E1E1E" }}
-                className="mt-[10px]"
-                placeholder="See output here!"
-                disabled
-                minRows={8}
-                variant="soft"
-                value={output}
-            />
-        </>
+                />
+            </div>
+
+            {/* Output Terminal */}
+            <div className="h-48 border-t border-white/10">
+                <div className="flex items-center gap-2 p-3 bg-slate-800 border-b border-white/10">
+                    <span className="text-sm font-medium text-gray-300">📟 Output</span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                </div>
+                <div className="h-full bg-slate-900 p-4 overflow-auto">
+                    <pre className="text-green-400 font-mono text-sm whitespace-pre-wrap">
+                        {output || "// Run your code to see output here..."}
+                    </pre>
+                </div>
+            </div>
+        </div>
     );
 }
 
