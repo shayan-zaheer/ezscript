@@ -1,14 +1,15 @@
 import axios from "axios";
 // import { lang_versions } from "./snippet";
+import LANGUAGES from "./languages";
 
 const API = axios.create({
     baseURL: "https://emkc.org/api/v2/piston",
 });
 
-export const executeCode = async (code) => {
+export const executeCode = async (code, language) => {
     const response = await API.post("/execute", {
-        language: "javascript",
-        version: "18.15.0",
+        language: language,
+        version: LANGUAGES.find(lang => lang.value == language).version,
         files: [
             {
                 content: code

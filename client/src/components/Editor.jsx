@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 import ACTIONS from "../actions";
+import LANGUAGES from "../../languages";
 
-function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
+function Editor({ socketRef, roomId, userRole, output, setEditInstance, language, setLanguage }) {
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
     const hasRequestedSync = useRef(false);
@@ -62,14 +63,27 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
                         <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-300">main.js</span>
+                    <span className="text-sm font-medium text-gray-300">
+                        main{LANGUAGES.find(lang => lang.value == language).extension}
+                    </span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                        userRole === "editor" 
-                            ? "bg-purple-500/20 text-purple-300 border border-purple-500/30" 
-                            : "bg-orange-500/20 text-orange-300 border border-orange-500/30"
-                    }`}>
+                    <select
+                            value={language}
+                            onChange={(e) => setLanguage(e.target.value)}
+                            className="w-full p-2 rounded-xl bg-slate-800/50 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                        >
+                            {LANGUAGES.map((lang) => (
+                                <option key={lang.name} value={lang.value} className="bg-slate-800">🔓 {lang.name}</option>
+                            ))}
+                        </select>
+                    <span
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${
+                            userRole === "editor"
+                                ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                                : "bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                        }`}
+                    >
                         {userRole === "editor" ? "🔓 Editor" : "👁️ Viewer"}
                     </span>
                 </div>
@@ -79,21 +93,24 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
                 <MonacoEditor
                     className="custom"
                     height="100%"
-                    language="javascript"
+                    language={LANGUAGES.find(lang => lang.value == language).value}
                     theme="vs-dark"
                     onMount={(editor) => {
                         editorRef.current = editor;
                         setEditInstance(editor);
 
                         if (socketRef.current && !hasRequestedSync.current) {
-                            socketRef.current.emit("request-code-sync", { roomId });
+                            socketRef.current.emit("request-code-sync", {
+                                roomId,
+                            });
                             hasRequestedSync.current = true;
                         }
                     }}
                     options={{
                         readOnly: userRole === "viewer",
                         fontSize: 16,
-                        fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace",
+                        fontFamily:
+                            "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace",
                         lineHeight: 1.6,
                         padding: { top: 20, bottom: 20 },
                         scrollBeyondLastLine: false,
@@ -101,12 +118,12 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
                         bracketPairColorization: { enabled: true },
                         guides: {
                             bracketPairs: true,
-                            indentation: true
+                            indentation: true,
                         },
                         smoothScrolling: true,
-                        cursorBlinking: 'smooth',
-                        renderLineHighlight: 'all',
-                        wordWrap: 'on',
+                        cursorBlinking: "smooth",
+                        renderLineHighlight: "all",
+                        wordWrap: "on",
                     }}
                     onChange={handleCodeChange}
                     loading={
@@ -120,17 +137,20 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance }) {
                                     wrapperStyle={{}}
                                     wrapperClass="dna-wrapper"
                                 />
-                                <p className="text-gray-400 mt-4 loading-dots">Loading editor</p>
+                                <p className="text-gray-400 mt-4 loading-dots">
+                                    Loading editor
+                                </p>
                             </div>
                         </div>
                     }
                 />
             </div>
 
-            {/* Output Terminal */}
             <div className="h-48 border-t border-white/10">
                 <div className="flex items-center gap-2 p-3 bg-slate-800 border-b border-white/10">
-                    <span className="text-sm font-medium text-gray-300">📟 Output</span>
+                    <span className="text-sm font-medium text-gray-300">
+                        📟 Output
+                    </span>
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 </div>
                 <div className="h-full bg-slate-900 p-4 overflow-auto">

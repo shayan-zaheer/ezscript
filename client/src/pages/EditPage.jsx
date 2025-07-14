@@ -14,6 +14,7 @@ import { executeCode } from "../../output_api";
 
 function EditPage() {
     const [editInstance, setEditInstance] = useState("");
+    const [language, setLanguage] = useState("javascript");
     const location = useLocation();
     const [clients, setClients] = useState([]);
     const [output, setOutput] = useState("");
@@ -42,9 +43,10 @@ function EditPage() {
         if (editInstance) {
             try {
                 const code = editInstance?.getValue();
-                const { run: result } = await executeCode(code);
+                const { run: result } = await executeCode(code, language);
                 setOutput(result.output);
             } catch (err) {
+                console.error(err);
                 setOutput(err.message);
             }
         } else {
@@ -255,7 +257,7 @@ function EditPage() {
                             <input
                                 className="hidden"
                                 onChange={handleOpenFile}
-                                accept=".js,.jsx,.ts,.tsx"
+                                accept=".js,.jsx,.ts,.tsx,.py,.c,.cpp"
                                 type="file"
                             />
                         </label>
@@ -295,6 +297,8 @@ function EditPage() {
                             setEditInstance={setEditInstance}
                             socketRef={socketRef}
                             roomId={roomId}
+                            language={language}
+                            setLanguage={setLanguage}
                         />
                     </div>
                 </div>

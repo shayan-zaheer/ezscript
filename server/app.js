@@ -15,7 +15,8 @@ const io = new Server(server, {
 
 const userSocketMap = {};
 const userRolesMap = {};
-const roomCodeMap = {}; // Store current code for each room
+const roomCodeMap = {};
+// const roomLangMap = {};
 
 function getAllConnectedClients(roomId) {
     return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
