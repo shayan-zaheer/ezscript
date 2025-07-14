@@ -4,7 +4,26 @@ import { DNA } from "react-loader-spinner";
 import ACTIONS from "../actions";
 import LANGUAGES from "../../languages";
 
-function Editor({ socketRef, roomId, userRole, output, setEditInstance, language, setLanguage }) {
+function Editor({
+    socketRef,
+    roomId,
+    userRole,
+    output,
+    setEditInstance,
+    language,
+    setLanguage,
+}) {
+    const handleLangChange = (e) => {
+        const newLanguage = e.target.value;
+        setLanguage(newLanguage);
+        if (socketRef.current) {
+            socketRef.current.emit("language-change", {
+                roomId,
+                language: newLanguage,
+            });
+        }
+    };
+
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
     const hasRequestedSync = useRef(false);
@@ -64,19 +83,30 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance, language
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
                     <span className="text-sm font-medium text-gray-300">
-                        main{LANGUAGES.find(lang => lang.value == language).extension}
+                        main
+                        {
+                            LANGUAGES.find((lang) => lang.value == language)
+                                .extension
+                        }
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <select
-                            value={language}
-                            onChange={(e) => setLanguage(e.target.value)}
-                            className="w-full p-2 rounded-xl bg-slate-800/50 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                        >
-                            {LANGUAGES.map((lang) => (
-                                <option key={lang.name} value={lang.value} className="bg-slate-800">🔓 {lang.name}</option>
-                            ))}
-                        </select>
+                        value={language}
+                        disabled={userRole == "viewer"}
+                        onChange={handleLangChange}
+                        className="w-full p-2 rounded-xl bg-slate-800/50 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                    >
+                        {LANGUAGES.map((lang) => (
+                            <option
+                                key={lang.name}
+                                value={lang.value}
+                                className="bg-slate-800"
+                            >
+                                🔓 {lang.name}
+                            </option>
+                        ))}
+                    </select>
                     <span
                         className={`px-3 py-1 text-xs font-medium rounded-full ${
                             userRole === "editor"
@@ -93,7 +123,9 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance, language
                 <MonacoEditor
                     className="custom"
                     height="100%"
-                    language={LANGUAGES.find(lang => lang.value == language).value}
+                    language={
+                        LANGUAGES.find((lang) => lang.value == language).value
+                    }
                     theme="vs-dark"
                     onMount={(editor) => {
                         editorRef.current = editor;
@@ -131,8 +163,8 @@ function Editor({ socketRef, roomId, userRole, output, setEditInstance, language
                             <div className="text-center">
                                 <DNA
                                     visible={true}
-                                    height="80"
-                                    width="80"
+                                    height="100%"
+                                    width="100%"
                                     ariaLabel="dna-loading"
                                     wrapperStyle={{}}
                                     wrapperClass="dna-wrapper"

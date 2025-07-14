@@ -144,6 +144,14 @@ function EditPage() {
                     }
                 );
 
+                socketRef.current.on("language-change", ({ language: newLanguage, changedBy }) => {
+                    setLanguage(newLanguage);
+                    toast.info(`Language changed to ${newLanguage}${changedBy ? ` by ${changedBy}` : ''}!`, {
+                        theme: "dark",
+                        position: "top-right",
+                    });
+                });
+
                 socketRef.current.on("role-update", ({ socketId, role }) => {
                     if (socketId === socketRef.current.id) {
                         setUserRole(role);
@@ -180,6 +188,7 @@ function EditPage() {
                 socketRef.current.off(ACTIONS.JOINED);
                 socketRef.current.off(ACTIONS.DISCONNECTED);
                 socketRef.current.off("role-update");
+                socketRef.current.off("language-change");
                 socketRef.current.off("connect_error");
                 socketRef.current.off("connect_failed");
             }

@@ -86,6 +86,15 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("language-change", ({ roomId, language }) => {
+        const changedBy = userSocketMap[socket.id];
+        
+        io.to(roomId).emit("language-change", {
+            language,
+            changedBy,
+        });
+    });
+
     socket.on("disconnecting", () => {
         const rooms = [...socket.rooms];
         rooms.forEach((roomId) => {
