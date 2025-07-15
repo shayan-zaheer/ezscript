@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet";
 import Client from "../components/Client";
 import Editor from "../components/Editor";
 import { initSocket } from "../../socket";
@@ -198,141 +199,151 @@ function EditPage() {
     if (!location.state) return <Navigate to="/" />;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-            <div className="grid grid-cols-[280px,1fr] h-screen">
-                <div className="sidebar p-6 text-white flex flex-col relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-10">
-                        <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-full blur-3xl animate-pulse"></div>
-                        <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
-                    </div>
-                    
-                    <div className="relative z-10 mb-8">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                                <span className="text-xl font-bold">⚡</span>
-                            </div>
-                            <h1 className="text-2xl font-bold glow-text">EZScript</h1>
+        <>
+            <Helmet>
+                <title>EZScript Editor - Collaborative Coding Room</title>
+                <meta name="description" content="Collaborate in real-time with others in a secure coding room. Edit, run, and share code with live role management and language support." />
+            </Helmet>
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                <div className="grid grid-cols-[280px,1fr] h-screen">
+                    <aside className="sidebar p-6 text-white flex flex-col relative overflow-hidden" aria-label="Sidebar">
+                        <div className="absolute inset-0 opacity-10" aria-hidden="true">
+                            <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-full blur-3xl animate-pulse"></div>
+                            <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
                         </div>
-                        
-                        <div className="glass-dark rounded-xl p-4 mb-6">
-                            <h3 className="text-sm font-semibold mb-3 text-gray-300">ROLES</h3>
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-3">
-                                    <div className="role-indicator editor"></div>
-                                    <span className="text-sm font-medium">Editor</span>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="role-indicator viewer"></div>
-                                    <span className="text-sm font-medium">Viewer</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="flex-1 relative z-10">
-                        <div className="glass-dark rounded-xl p-4 mb-6">
-                            <h3 className="text-sm font-semibold mb-4 text-gray-300 flex items-center gap-2">
-                                <span className="w-2 h-2 bg-green-500 rounded-full pulse-green"></span>
-                                CONNECTED USERS
-                            </h3>
-                            <div className="flex flex-col gap-4 max-h-60 overflow-y-auto">
-                                {clients.map((client) => (
-                                    <Client
-                                        username={client.username}
-                                        key={client.socketID}
-                                        role={client.role}
-                                        currentUserRole={userRole}
-                                        isCurrentUser={
-                                            client.socketID === socketRef.current?.id
-                                        }
-                                        onGrantPermission={() =>
-                                            grantPermission(client.socketID)
-                                        }
-                                        onRevokePermission={() =>
-                                            revokePermission(client.socketID)
-                                        }
-                                    />
-                                ))}
+                        <header className="relative z-10 mb-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                                    <span className="text-xl font-bold" aria-hidden="true">⚡</span>
+                                </div>
+                                <h1 className="text-2xl font-bold glow-text" id="main-title">EZScript</h1>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="space-y-4 relative z-10">
-                        <label className="file-input-wrapper block p-4 rounded-xl text-center cursor-pointer transition-all duration-300 font-medium text-white">
-                            <div className="flex items-center justify-center gap-2">
-                                <span className="text-lg">📁</span>
-                                Open File
-                            </div>
-                            <input
-                                className="hidden"
-                                onChange={handleOpenFile}
-                                accept=".js,.jsx,.ts,.tsx,.py,.c,.cpp"
-                                type="file"
+                            <section className="glass-dark rounded-xl p-4 mb-6" aria-labelledby="roles-heading">
+                                <h2 className="text-sm font-semibold mb-3 text-gray-300" id="roles-heading">Roles</h2>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-3">
+                                        <div className="role-indicator editor" aria-label="Editor role indicator"></div>
+                                        <span className="text-sm font-medium">Editor</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="role-indicator viewer" aria-label="Viewer role indicator"></div>
+                                        <span className="text-sm font-medium">Viewer</span>
+                                    </div>
+                                </div>
+                            </section>
+                        </header>
+
+                        <main className="flex-1 relative z-10">
+                            <section className="glass-dark rounded-xl p-4 mb-6" aria-labelledby="connected-users-heading">
+                                <h2 className="text-sm font-semibold mb-4 text-gray-300 flex items-center gap-2" id="connected-users-heading">
+                                    <span className="w-2 h-2 bg-green-500 rounded-full pulse-green" aria-hidden="true"></span>
+                                    Connected Users
+                                </h2>
+                                <div className="flex flex-col gap-4 max-h-60 overflow-y-auto">
+                                    {clients.map((client) => (
+                                        <Client
+                                            username={client.username}
+                                            key={client.socketID}
+                                            role={client.role}
+                                            currentUserRole={userRole}
+                                            isCurrentUser={
+                                                client.socketID === socketRef.current?.id
+                                            }
+                                            onGrantPermission={() =>
+                                                grantPermission(client.socketID)
+                                            }
+                                            onRevokePermission={() =>
+                                                revokePermission(client.socketID)
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        </main>
+
+                        <nav className="space-y-4 relative z-10" aria-label="Sidebar actions">
+                            <label className="file-input-wrapper block p-4 rounded-xl text-center cursor-pointer transition-all duration-300 font-medium text-white">
+                                <div className="flex items-center justify-center gap-2">
+                                    <span className="text-lg" aria-hidden="true">📁</span>
+                                    <span>Open File</span>
+                                </div>
+                                <input
+                                    className="hidden"
+                                    onChange={handleOpenFile}
+                                    accept=".js,.jsx,.ts,.tsx,.py,.c,.cpp"
+                                    type="file"
+                                    aria-label="Open a code file"
+                                />
+                            </label>
+
+                            <button
+                                onClick={copyRoomId}
+                                className="w-full p-4 rounded-xl font-medium transition-all duration-300 glass-dark hover:bg-white/20 text-white flex items-center justify-center gap-2"
+                                aria-label="Copy Room ID"
+                            >
+                                <span className="text-lg" aria-hidden="true">📋</span>
+                                Copy Room ID
+                            </button>
+
+                            <button
+                                onClick={runCode}
+                                className="w-full p-4 rounded-xl font-medium btn-primary flex items-center justify-center gap-2"
+                                aria-label="Run Code"
+                            >
+                                <span className="text-lg" aria-hidden="true">▶️</span>
+                                Run Code
+                            </button>
+
+                            <button
+                                onClick={leaveRoom}
+                                className="w-full p-4 rounded-xl font-medium btn-success flex items-center justify-center gap-2"
+                                aria-label="Leave Room"
+                            >
+                                <span className="text-lg" aria-hidden="true">🚪</span>
+                                Leave Room
+                            </button>
+                        </nav>
+                    </aside>
+
+                    <div className="relative p-6">
+                        <div className="editor-wrapper h-full">
+                            <Editor
+                                output={output}
+                                userRole={userRole}
+                                setUserRole={setUserRole}
+                                setEditInstance={setEditInstance}
+                                socketRef={socketRef}
+                                roomId={roomId}
+                                language={language}
+                                setLanguage={setLanguage}
                             />
-                        </label>
-
-                        <button
-                            onClick={copyRoomId}
-                            className="w-full p-4 rounded-xl font-medium transition-all duration-300 glass-dark hover:bg-white/20 text-white flex items-center justify-center gap-2"
-                        >
-                            <span className="text-lg">📋</span>
-                            Copy Room ID
-                        </button>
-
-                        <button
-                            onClick={runCode}
-                            className="w-full p-4 rounded-xl font-medium btn-primary flex items-center justify-center gap-2"
-                        >
-                            <span className="text-lg">▶️</span>
-                            Run Code
-                        </button>
-
-                        <button
-                            onClick={leaveRoom}
-                            className="w-full p-4 rounded-xl font-medium btn-success flex items-center justify-center gap-2"
-                        >
-                            <span className="text-lg">🚪</span>
-                            Leave Room
-                        </button>
+                        </div>
                     </div>
                 </div>
 
-                <div className="relative p-6">
-                    <div className="editor-wrapper h-full">
-                        <Editor
-                            output={output}
-                            userRole={userRole}
-                            setUserRole={setUserRole}
-                            setEditInstance={setEditInstance}
-                            socketRef={socketRef}
-                            roomId={roomId}
-                            language={language}
-                            setLanguage={setLanguage}
-                        />
-                    </div>
-                </div>
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="dark"
+                    toastStyle={{
+                        background: 'rgba(15, 23, 42, 0.9)',
+                        backdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        color: 'white'
+                    }}
+                />
             </div>
-            
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"
-                toastStyle={{
-                    background: 'rgba(15, 23, 42, 0.9)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    color: 'white'
-                }}
-            />
-        </div>
+        </>
     );
 }
 

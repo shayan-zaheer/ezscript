@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Editor as MonacoEditor } from "@monaco-editor/react";
 import { DNA } from "react-loader-spinner";
 import ACTIONS from "../actions";
@@ -27,6 +27,26 @@ function Editor({
     const editorRef = useRef(null);
     const isUpdatingFromServer = useRef(false);
     const hasRequestedSync = useRef(false);
+
+    const getIconColor = (langValue) => {
+        switch (langValue) {
+            case 'c':
+            case 'cpp':
+            case 'typescript':
+            case 'csharp':
+                return 'text-blue-500';
+            case 'java':
+                return 'text-red-500';
+            case 'python':
+            case 'javascript':
+                return 'text-yellow-500';
+            default:
+                return 'text-gray-400';
+        }
+    };
+
+    const currentLang = LANGUAGES.find((lang) => lang.value === language);
+    const IconComponent = currentLang?.icon;
 
     useEffect(() => {
         const init = () => {
@@ -103,10 +123,15 @@ function Editor({
                                 value={lang.value}
                                 className="bg-slate-800"
                             >
-                                🔓 {lang.name}
+                                {lang.name}
                             </option>
                         ))}
                     </select>
+                    <div className="flex items-center gap-2 px-2">
+                        {IconComponent && (
+                            <IconComponent className={`text-lg ${getIconColor(language)}`} />
+                        )}
+                    </div>
                     <span
                         className={`px-3 py-1 text-xs font-medium rounded-full ${
                             userRole === "editor"
